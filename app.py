@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, send_from_directory
 import os
 from rdflib import Graph
-from validate_dcat import validate_rdf
+from .validation.validate_dcat import validate_rdf
 
 app = Flask(__name__, static_url_path='/static')
 
@@ -24,5 +24,5 @@ def validate():
 
     return jsonify({
             "conforms": False,
-            "validationReport": "Here will be the validation report"
+            "validationReport": "Alles super"
         })
