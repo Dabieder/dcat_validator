@@ -32,7 +32,7 @@ const app = Vue.createApp({
 
         // Validation for text input
         validateText() {
-            fetch('/validate_text', {
+            fetch('/validate/text', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ const app = Vue.createApp({
             const formData = new FormData();
             formData.append('rdf_file', this.fileData);  // Append file to FormData
 
-            fetch('/validate_file', {
+            fetch('/validate/file', {
                 method: 'POST',
                 body: formData,
             })
@@ -70,13 +70,13 @@ const app = Vue.createApp({
 
         // Validation for URL input
         validateUrl() {
-            fetch('/validate_url', {
+            fetch('/validate/url', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    rdf_url: this.rdfUrl
+                    url: this.rdfUrl
                 }),
             })
             .then(response => response.json())
