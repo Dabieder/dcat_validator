@@ -18,6 +18,8 @@ def serve_index():
 def validate_rdf():
     data = request.get_json()
 
+    print(data["rdf"])
+
     return jsonify({
             "conforms": False,
             "validationReport": "Here will be the validation report"
