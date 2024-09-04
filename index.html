@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DCAT Validator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Dcat Validator</h1>
+
+    <div class="container">
+        <!-- Row of buttons with validate -->
+        <div class="row">
+            <button id="validateButton">Validate</button>
+        </div>
+
+        <!-- RDF Textarea with clear button -->
+        <div class="row">
+            <label for="rdfTextarea">RDF:</label>
+            <br>
+            <textarea id="rdfTextarea"></textarea>
+            <br>
+            <button id="clearRdfButton">Clear</button>
+        </div>
+
+        <!-- SHACL Textarea with clear button -->
+        <div class="row">
+            <label for="shaclTextarea">SHACL:</label>
+            <br>
+            <textarea id="shaclTextarea"></textarea>
+            <br>
+            <button id="clearShaclButton">Clear</button>
+        </div>
+    </div>
+
+    <!-- Link to external JS file -->
+    <script src="validate.js"></script>
+</body>
+</html>
