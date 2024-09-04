@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, send_from_directory
 import os
 from rdflib import Graph
-from pyshacl import validate
+from validate_dcat import validate_rdf
 
 app = Flask(__name__, static_url_path='/static')
 
@@ -15,10 +15,9 @@ def serve_index():
 
 
 @app.route("/validate", methods=["POST"])
-def validate_rdf():
-    data = request.get_json()
-
-    print(data["rdf"])
+def validate():
+    rdf_data = request.get_json().data["rdf"]
+    validation_result = validate_rdf(rdf_data, os.path.join(SHAPES_DIR, "dcat-hvd.ttl"))
 
     return jsonify({
             "conforms": False,
