@@ -10,28 +10,56 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <h1>Dcat Validator</h1>
 
-    <div class="container">
-        <!-- Row of buttons with validate -->
+    <div id="app" class="container">
+        <!-- Radio buttons for selection -->
         <div class="row">
-            <button id="validateButton">Validate</button>
+            <label>
+                <input type="radio" v-model="inputType" value="textarea"> Input RDF Text
+            </label>
+            <label>
+                <input type="radio" v-model="inputType" value="file"> Upload RDF File
+            </label>
+            <label>
+                <input type="radio" v-model="inputType" value="url"> Input RDF URL
+            </label>
         </div>
 
-        <!-- RDF Textarea with clear button -->
-        <div class="row">
+        <!-- Conditional input fields based on radio selection -->
+        <div class="row" v-if="inputType === 'textarea'">
             <label for="rdfTextarea">RDF:</label>
             <br>
-            <textarea id="rdfTextarea"></textarea>
-            <br>
-            <button id="clearRdfButton">Clear</button>
+            <textarea id="rdfTextarea" v-model="rdfText"></textarea>
         </div>
 
-        <!-- SHACL Textarea with clear button -->
+        <div class="row" v-if="inputType === 'file'">
+            <label for="rdfFile">Upload RDF File:</label>
+            <br>
+            <input type="file" id="rdfFile" @change="handleFileUpload" ref="rdfFile">
+            <div v-if="fileName">{{ fileName }}</div>
+        </div>
+
+        <div class="row" v-if="inputType === 'url'">
+            <label for="rdfUrl">RDF URL:</label>
+            <br>
+            <input type="text" id="rdfUrl" v-model="rdfUrl">
+        </div>
+
+        <!-- Validate Button -->
         <div class="row">
-            <label for="outpuitTextarea">Output:</label>
+            <button @click="validate">Validate</button>
+        </div>
+
+        <!-- Output Textarea -->
+        <div class="row">
+            <label for="outputTextarea">Output:</label>
             <br>
-            <textarea id="outputTextarea"></textarea>
-            <br>
-            <button id="clearOutputButton">Clear</button>
+            <textarea id="outputTextarea" v-model="output" readonly></textarea>
+        </div>
+
+        <!-- Clear Buttons -->
+        <div class="row">
+            <button @click="clearOutput">Clear Output</button>
+            <button @click="clearInput">Clear Input</button>
         </div>
     </div>
 

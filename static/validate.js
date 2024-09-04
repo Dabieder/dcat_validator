@@ -1,44 +1,106 @@
-// Function that runs when clicking the "Validate" button
-function validate() {
-    let rdfText = document.getElementById("rdfTextarea").value;
-
-    // // Example validation logic
-    // if (rdfText === "" || shaclText === "") {
-    //     alert("Both RDF and SHACL inputs are required for validation.");
-    // } else {
-    //     // Placeholder validation logic
-    //     alert("Validation in progress...");
-    //     // Here you would include actual validation logic
-    // }
-
-
-    fetch('/validate', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
+const app = Vue.createApp({
+    data() {
+        return {
+            inputType: 'textarea',  // Default input type is textarea
+            rdfText: '',            // Bound to the textarea
+            fileName: '',           // Display the uploaded file name
+            fileData: null,         // Store the uploaded file data
+            rdfUrl: '',             // Bound to the URL input
+            output: ''              // Output for validation results
+        };
+    },
+    methods: {
+        // Handles file upload and stores the file
+        handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                this.fileName = file.name;
+                this.fileData = file;  // Store file data for submission
+            }
         },
-        body: JSON.stringify({
-            rdf: rdfText,
-        })
-    })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById("outputTextarea").value = data.validationReport;
-        })
-}
 
-// Add event listeners for buttons
-window.onload = function () {
-    // Validate button
-    document.getElementById("validateButton").addEventListener("click", validate);
+        // Handles the validation logic based on selected input type
+        validate() {
+            if (this.inputType === 'textarea') {
+                this.validateText();
+            } else if (this.inputType === 'file') {
+                this.validateFile();
+            } else if (this.inputType === 'url') {
+                this.validateUrl();
+            }
+        },
 
-    // Clear RDF textarea
-    document.getElementById("clearRdfButton").addEventListener("click", function () {
-        document.getElementById("rdfTextarea").value = "";
-    });
+        // Validation for text input
+        validateText() {
+            fetch('/validate_text', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    rdf: this.rdfText
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                this.output = `Validation Result: ${data.conforms ? 'Conforms' : 'Does not conform'}\n${data.validationReport}`;
+            })
+            .catch(error => {
+                this.output = `Error during validation: ${error}`;
+            });
+        },
 
-    // Clear SHACL textarea
-    document.getElementById("clearOutputButton").addEventListener("click", function () {
-        document.getElementById("shaclTextarea").value = "";
-    });
-};
+        // Validation for file upload
+        validateFile() {
+            const formData = new FormData();
+            formData.append('rdf_file', this.fileData);  // Append file to FormData
+
+            fetch('/validate_file', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                this.output = `Validation Result: ${data.conforms ? 'Conforms' : 'Does not conform'}\n${data.validationReport}`;
+            })
+            .catch(error => {
+                this.output = `Error during validation: ${error}`;
+            });
+        },
+
+        // Validation for URL input
+        validateUrl() {
+            fetch('/validate_url', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    rdf_url: this.rdfUrl
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                this.output = `Validation Result: ${data.conforms ? 'Conforms' : 'Does not conform'}\n${data.validationReport}`;
+            })
+            .catch(error => {
+                this.output = `Error during validation: ${error}`;
+            });
+        },
+
+        // Clear the output field
+        clearOutput() {
+            this.output = '';
+        },
+
+        // Clear the input fields
+        clearInput() {
+            this.rdfText = '';
+            this.fileName = '';
+            this.fileData = null;
+            this.rdfUrl = '';
+        }
+    }
+});
+
+app.mount('#app');
