@@ -18,11 +18,9 @@ def serve_index():
 def validate():
     request_json = request.get_json()
 
-    rdf_data = request_json["rdf"]
+    data_graph = request_json["rdf"]
+    shacl_graph = os.path.join(SHAPES_DIR, "dcat-hvd.ttl")
 
-    validation_result = validate_rdf(rdf_data, os.path.join(SHAPES_DIR, "dcat-hvd.ttl"))
+    validation_result = validate_rdf(data_graph, shacl_graph)
 
-    return jsonify({
-            "conforms": False,
-            "validationReport": "Alles super"
-        })
+    return jsonify(validation_result)
