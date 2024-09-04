@@ -16,7 +16,10 @@ def serve_index():
 
 @app.route("/validate", methods=["POST"])
 def validate():
-    rdf_data = request.get_json().data["rdf"]
+    request_json = request.get_json()
+
+    rdf_data = request_json["rdf"]
+
     validation_result = validate_rdf(rdf_data, os.path.join(SHAPES_DIR, "dcat-hvd.ttl"))
 
     return jsonify({
