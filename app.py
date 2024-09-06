@@ -33,7 +33,7 @@ def validate_from_url():
 
     data_graph = request_json["url"]
     shacl_graph = os.path.join(SHAPES_DIR, "dcat-ap_2.1.1_shacl_shapes.ttl")
-    ont_graph = os.path.join(SHAPES_DIR, "dcat-ap-de-imports.ttl")
+    ont_graph = None  # os.path.join(SHAPES_DIR, "dcat-ap-de-imports.ttl")
 
     conforms, result_text = validate_rdf(data_graph, shacl_graph, ont_graph)
 
@@ -62,7 +62,7 @@ def validate_file():
     if file:
         data_graph = file
         shacl_graph = os.path.join(SHAPES_DIR, "dcat-ap_2.1.1_shacl_shapes.ttl")
-        ont_graph = os.path.join(SHAPES_DIR, "dcat-ap-de-imports.ttl")
+        ont_graph = None  # os.path.join(SHAPES_DIR, "dcat-ap-de-imports.ttl")
 
         conforms, result_text = validate_rdf(data_graph, shacl_graph, ont_graph)
 
@@ -71,7 +71,7 @@ def validate_file():
     return jsonify({"error": "An error occurred while processing the file"}), 500
 
 
-@app.route("/validate/text", methods=["POST"]) 
+@app.route("/validate/text", methods=["POST"])
 def validate():
     print("Received request to validate")
 
@@ -83,7 +83,7 @@ def validate():
 
     data_graph = request_json["rdf"]
     shacl_graph = os.path.join(SHAPES_DIR, "dcat-ap_2.1.1_shacl_shapes.ttl")
-    ont_graph = os.path.join(SHAPES_DIR, "dcat-ap-de-imports.ttl")
+    ont_graph = None  # os.path.join(SHAPES_DIR, "dcat-ap-de-imports.ttl")
 
     conforms, result_text = validate_rdf(data_graph, shacl_graph, ont_graph)
 

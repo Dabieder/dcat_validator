@@ -5,6 +5,7 @@ from pyshacl import validate
 
 def validate_rdf(data_graph: str, shacl_graph: str, ont_graph: str):
 
+    print(f"{data_graph}")
     conforms, _, result_text = validate(data_graph,
                                         data_graph_format="xml",
                                         shacl_graph=shacl_graph,
@@ -35,9 +36,9 @@ data_graphs = {"url": url,
                "text": content}
 
 shacl_graph = os.path.join(SHAPES_DIR, "dcat-ap_2.1.1_shacl_shapes.ttl")
-ont_graph = os.path.join(SHAPES_DIR, "dcat-ap-de-imports.ttl")
+ont_graph = None  # os.path.join(SHAPES_DIR, "dcat-ap-de-imports.ttl")
 
 for label, data_graph in data_graphs.items():
-    print(f"Testing '{label}': \n{data_graph}")
+    print(f"Testing '{label}':")
     conforms, result = validate_rdf(data_graph, shacl_graph, ont_graph)
     print(conforms, result)
