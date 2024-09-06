@@ -8,15 +8,18 @@ app = Flask(__name__, static_url_path="/static")
 # Directory for SHACL files
 SHAPES_DIR = "shapes"
 
-ALLOWED_EXTENSIONS = {".ttl", ".rdf", ".jsonld"}
+ALLOWED_EXTENSIONS = {".ttl", ".rdf", ".json"}
+
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
 @app.route("/")
 def serve_index():
     return send_from_directory("static", "index.html")
+
 
 @app.route("/validate/url", methods=["POST"])
 def validate_from_url():
@@ -29,11 +32,13 @@ def validate_from_url():
         return jsonify({"error": "No URL provided"}), 400
 
     data_graph = request_json["url"]
-    shacl_graph = os.path.join(SHAPES_DIR, "dcat-hvd.ttl")
+    shacl_graph = os.path.join(SHAPES_DIR, "dcat-ap_2.1.1_shacl_shapes.ttl")
+    ont_graph = os.path.join(SHAPES_DIR, "dcat-ap-de-imports.ttl")
 
-    conforms, result_text = validate_rdf(data_graph, shacl_graph)
+    conforms, result_text = validate_rdf(data_graph, shacl_graph, ont_graph)
 
     return jsonify({"conforms": conforms, "validationReport": result_text})
+
 
 @app.route("/validate/file", methods=["POST"])
 def validate_file():
@@ -55,18 +60,18 @@ def validate_file():
         return jsonify({"error": "Invalid file extension"}), 400
 
     if file:
-        # read the file and convert it to a string
-        
+        data_graph = file
+        shacl_graph = os.path.join(SHAPES_DIR, "dcat-ap_2.1.1_shacl_shapes.ttl")
+        ont_graph = os.path.join(SHAPES_DIR, "dcat-ap-de-imports.ttl")
 
-        shacl_graph = os.path.join(SHAPES_DIR, "dcat-hvd.ttl")
-
-        conforms, result_text = validate_rdf(data_graph, shacl_graph)
+        conforms, result_text = validate_rdf(data_graph, shacl_graph, ont_graph)
 
         return jsonify({"conforms": conforms, "validationReport": result_text})
 
     return jsonify({"error": "An error occurred while processing the file"}), 500
 
-@app.route("/validate", methods=["POST"]) 
+
+@app.route("/validate/text", methods=["POST"]) 
 def validate():
     print("Received request to validate")
 
@@ -77,8 +82,9 @@ def validate():
         return jsonify({"error": "No RDF data provided"}), 400
 
     data_graph = request_json["rdf"]
-    shacl_graph = os.path.join(SHAPES_DIR, "dcat-hvd.ttl")
+    shacl_graph = os.path.join(SHAPES_DIR, "dcat-ap_2.1.1_shacl_shapes.ttl")
+    ont_graph = os.path.join(SHAPES_DIR, "dcat-ap-de-imports.ttl")
 
-    conforms, result_text = validate_rdf(data_graph, shacl_graph)
+    conforms, result_text = validate_rdf(data_graph, shacl_graph, ont_graph)
 
     return jsonify({"conforms": conforms, "validationReport": result_text})
