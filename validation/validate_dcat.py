@@ -42,3 +42,5 @@ for label, data_graph in data_graphs.items():
     print(f"Testing '{label}':")
     conforms, result = validate_rdf(data_graph, shacl_graph, ont_graph)
     print(conforms, result)
+
+os.remove(filepath)
