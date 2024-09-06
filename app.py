@@ -1,7 +1,6 @@
-from flask import Flask, jsonify, request, send_from_directory
 import os
-from rdflib import Graph
-from .validation.validate_dcat import validate_rdf
+from flask import Flask, jsonify, request, send_from_directory
+from validation.validate_dcat import validate_rdf
 
 app = Flask(__name__, static_url_path="/static")
 
