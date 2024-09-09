@@ -11,7 +11,7 @@ def validate_rdf(data_graph: str, shacl_graph: str, ont_graph: str):
                                         ont_graph=ont_graph,
                                         ont_graph_format="ttl",
                                         do_owl_imports=True,
-                                        inference="rdfs",
+                                        inference=None,
                                         advanced=True,
                                         debug=False)
 
