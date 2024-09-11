@@ -9,7 +9,7 @@ SHAPES_DIR = "shapes"
 
 VALIDATION_FILE = "dcat-ap_2.1.1_shacl_shapes.ttl"
 
-ALLOWED_EXTENSIONS = {"ttl", "rdf", "json"}
+ALLOWED_EXTENSIONS = {"ttl", "rdf", "json", "xml"}
 
 
 def allowed_file(filename):
@@ -65,6 +65,7 @@ def validate_file():
 
     except Exception as e:
         return jsonify({"error": "An error occurred while processing the file"}), 500
+
 
 @app.route("/validate/text", methods=["POST"])
 def validate():
