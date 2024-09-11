@@ -1,4 +1,5 @@
 import os
+from rdflib import Graph
 from flask import Flask, jsonify, request, send_from_directory
 from validation.validate_dcat import validate_rdf
 
@@ -7,7 +8,12 @@ app = Flask(__name__, static_url_path="/static")
 # Directory for SHACL files
 SHAPES_DIR = "shapes"
 
-VALIDATION_FILE = "dcat-ap_2.1.1_shacl_shapes.ttl"
+VALIDATION_FILES = ["dcat-ap_2.1.1_shacl_shapes.ttl",
+                    "dcat-ap-konventionen.ttl",
+                    "dcat-ap-spec-german-additions.ttl",
+                    "dcat-ap-spec-german-messages.ttl"]
+
+VOCABULARY_FILE = "dcat-ap-de-imports.ttl"
 
 ALLOWED_EXTENSIONS = {"ttl", "rdf", "json", "xml"}
 
@@ -33,8 +39,7 @@ def validate_from_url():
         print("No URL provided")
         return jsonify({"error": "No URL provided"}), 400
 
-    shacl_graph = get_shacl_graph()
-    conforms, result_text = perform_validation(url, shacl_graph)
+    conforms, result_text = perform_validation(url)
 
     return jsonify({"conforms": conforms, "validationReport": result_text})
 
@@ -58,8 +63,7 @@ def validate_file():
         file_extension = file.filename.rsplit(".", 1)[1].lower()
         file_content = file.read().decode("utf-8")
 
-        shacl_graph = get_shacl_graph()
-        conforms, result_text = perform_validation(file_content, shacl_graph, data_graph_format=file_extension)
+        conforms, result_text = perform_validation(file_content, data_graph_format=file_extension)
 
         return jsonify({"conforms": conforms, "validationReport": result_text})
 
@@ -78,8 +82,7 @@ def validate():
         print("No RDF data provided")
         return jsonify({"error": "No RDF data provided"}), 400
 
-    shacl_graph = get_shacl_graph()
-    conforms, result_text = perform_validation(rdf_data, shacl_graph)
+    conforms, result_text = perform_validation(rdf_data)
 
     return jsonify({"conforms": conforms, "validationReport": result_text})
 
@@ -88,11 +91,21 @@ def perform_validation(
     data_graph, shacl_graph=None, ont_graph=None, data_graph_format: str = "xml"
 ):
     if shacl_graph is None:
-        shacl_graph = os.path.join(SHAPES_DIR, VALIDATION_FILE)
+        shacl_graph = get_shacl_graph()
+
+    if ont_graph is None:
+        ont_graph = get_ont_graph()
 
     conforms, result_text = validate_rdf(data_graph, shacl_graph, ont_graph, data_graph_format)
     return conforms, result_text
 
 
 def get_shacl_graph():
-    return os.path.join(SHAPES_DIR, VALIDATION_FILE)
+    shacl_graph = Graph()
+    for shape_file in VALIDATION_FILES:
+        shacl_graph.parse(os.path.join(SHAPES_DIR, shape_file))
+    return shacl_graph
+
+
+def get_ont_graph():
+    return os.path.join(SHAPES_DIR, VOCABULARY_FILE)
